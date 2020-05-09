@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -22,7 +22,7 @@ public class Transition {
     @Enumerated(EnumType.STRING)
     private FeedbackStatus destination;
 
-    private Date date;
+    private Timestamp date;
 
     @ManyToOne
     private Feedback feedback;
