@@ -24,6 +24,8 @@ public class Transition {
 
     private Timestamp date;
 
+    private Integer moderatorId;
+
     @ManyToOne
     private Feedback feedback;
 }

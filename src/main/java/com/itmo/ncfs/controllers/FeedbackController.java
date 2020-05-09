@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/v1")
 public class FeedbackController {
 
     private final UserRepo userRepo;

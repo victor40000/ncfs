@@ -29,6 +29,8 @@ public class Feedback {
 
     private LocalDateTime createdWhen;
 
+    private LocalDateTime updatedWhen;
+
     @Enumerated(EnumType.STRING)
     private FeedbackStatus status;
 

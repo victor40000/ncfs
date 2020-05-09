@@ -140,6 +140,7 @@ public class FeedbackService {
     public Double getRating(Integer productId) {
         List<Feedback> feedback = feedbackRepo.findAll().stream()
                 .filter(var -> productId.equals(var.getProductId()))
+                .filter(var -> FeedbackStatus.APPROVED.equals(var.getStatus()))
                 .collect(Collectors.toList());
         double sum = feedback.stream()
                 .map(Feedback::getRating)

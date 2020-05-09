@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping(value = "/api/moderation")
+@RequestMapping(value = "/v1/moderation")
 public class ModerationFeedbackController {
 
     private final UserRepo userRepo;
