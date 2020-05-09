@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,7 +43,7 @@ public class FeedbackService {
     public FeedbackDto addFeedback(FeedbackDto feedbackDto) {
         validator.validateAddFeedbackCase(feedbackDto);
         Feedback feedback = getFeedback(feedbackDto);
-        feedback.setCreatedWhen(new Timestamp(System.currentTimeMillis()));
+        feedback.setCreatedWhen(LocalDateTime.now());
         feedback.setId(null);
         feedback.setStatus(FeedbackStatus.SUBMITTED);
         return getFeedbackDto(feedbackRepo.save(feedback));
@@ -80,8 +80,8 @@ public class FeedbackService {
         return getFeedbackDto(feedbackRepo.save(feedback));
     }
 
-    public List<FeedbackDto> getFeedback(Timestamp startDate,
-                                         Timestamp endDate,
+    public List<FeedbackDto> getFeedback(LocalDateTime startDate,
+                                         LocalDateTime endDate,
                                          List<Integer> feedbackIds,
                                          Integer moderatorId,
                                          Integer productId,
@@ -96,14 +96,14 @@ public class FeedbackService {
             feedbackIdPred = feedbackRoot.get("id").in(feedbackIds);
         }
 
-        Predicate moderatorIdPred = feedbackRoot.get("moderated_by").isNotNull();
+        Predicate moderatorIdPred = feedbackRoot.get("moderatedBy").isNotNull();
         if (moderatorId != null) {
-            moderatorIdPred = feedbackRoot.get("moderated_by").in(moderatorId);
+            moderatorIdPred = feedbackRoot.get("moderatedBy").in(moderatorId);
         }
 
-        Predicate productIdPred = feedbackRoot.get("product_id").isNotNull();
+        Predicate productIdPred = feedbackRoot.get("productId").isNotNull();
         if (productId != null) {
-            productIdPred = feedbackRoot.get("product_id").in(productId);
+            productIdPred = feedbackRoot.get("productId").in(productId);
         }
 
         Predicate statusesPred = feedbackRoot.get("status").isNotNull();
@@ -111,12 +111,21 @@ public class FeedbackService {
             statusesPred = feedbackRoot.get("status").in(statuses);
         }
 
-        Predicate datePred = feedbackRoot.get("created_when").isNotNull();
-        if (startDate != null && endDate != null) {
-            datePred = builder.between(feedbackRoot.get("created_when"), startDate, endDate);
+        Predicate startDatePred = feedbackRoot.get("createdWhen").isNotNull();
+        if (startDate != null) {
+            startDatePred = builder.greaterThan(feedbackRoot.get("createdWhen"), startDate);
         }
 
-        query.where(feedbackIdPred, moderatorIdPred, productIdPred, statusesPred, datePred);
+        Predicate endDatePred = feedbackRoot.get("createdWhen").isNotNull();
+        if (endDate != null) {
+            endDatePred = builder.lessThan(feedbackRoot.get("createdWhen"), endDate);
+        }
+
+        if (moderatorId == null) {
+            query.where(feedbackIdPred, productIdPred, statusesPred, startDatePred, endDatePred);
+        } else {
+            query.where(feedbackIdPred, moderatorIdPred, productIdPred, statusesPred, startDatePred, endDatePred);
+        }
         return entityManager.createQuery(query).getResultList().stream()
                 .map(this::getFeedbackDto)
                 .collect(Collectors.toList());

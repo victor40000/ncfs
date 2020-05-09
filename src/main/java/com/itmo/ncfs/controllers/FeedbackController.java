@@ -22,6 +22,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -69,13 +70,13 @@ public class FeedbackController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Transactional
-    public List<FeedbackDto> getFeedback(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Timestamp startDate,
-                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Timestamp endDate,
+    public List<FeedbackDto> getFeedback(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
                                          @RequestParam(required = false) List<Integer> ids,
                                          @RequestParam(required = false) Integer moderatorId,
                                          @RequestParam(required = false) Integer productId,
                                          @RequestParam(required = false) List<FeedbackStatus> statuses) {
-        return feedbackService.getFeedback(new Timestamp(System.currentTimeMillis()),new Timestamp(System.currentTimeMillis()), ids, moderatorId, productId, statuses);
+        return feedbackService.getFeedback(startDate, endDate, ids, moderatorId, productId, statuses);
     }
 
     @RequestMapping(value = "/rating/{productId}", method = RequestMethod.GET)

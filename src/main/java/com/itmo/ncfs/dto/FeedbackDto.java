@@ -14,6 +14,7 @@ import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -34,7 +35,7 @@ public class FeedbackDto {
 
     private String declineMessage;
 
-    private Timestamp createdWhen;
+    private LocalDateTime createdWhen;
 
     @NotNull(groups = {UpdateStatusCase.class}, message = MANDATORY_FIELD_ERROR)
     private FeedbackStatus status;
