@@ -217,14 +217,6 @@
             </div>
         </div>
 
-        <div id="personal-review-block" class="row" style="display: none">
-            <div class="col-sm-offset-1 col-sm-10">
-                <hr/>
-                <div class="personal-review-block">
-                </div>
-            </div>
-        </div>
-
         <div class="row">
             <div class="col-sm-offset-1 col-sm-10">
                 <hr/>
@@ -379,7 +371,9 @@
         if (authorizedUser != null && choosedRate != null) {
             var description = $("#rateForProduct .comment").val();
             addFeedbackOfProduct(currentProductId, choosedRate, authorizedUser["customerId"], description);
-        } 
+        }
+        $("#rateForProduct").hide();
+        $("#myDeclinedFeedback").hide();
     });
 
     $("#rateUpdateForProduct .leaveFeedback").click(function() {
@@ -436,8 +430,6 @@
         } else if (userFeedback["status"] == "APPROVED") {
             showUserFeedbackOnApproved(userFeedback);
         } else if (userFeedback["status"] == "DECLINED") {
-            $(".personal-review-block").addClass("redBackground");
-            $("#personal-review-block").show();
             showUserFeedbackOnDecline(userFeedback);
         }
     }
@@ -497,6 +489,7 @@
             async: true,
             success: function(data) {
                 console.log(data);
+                showUserFeedbackOnSubmitted(data);
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 alert('Error occured!');
