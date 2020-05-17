@@ -52,7 +52,7 @@
         </div>
     </form>
 
-    <form id="rateForProduct" method="post" action="/signIn" role="form" class="row"><!-- style="display: none"-->
+    <form id="rateForProduct" method="post" action="/signIn" role="form" class="row" style="display: none">
         <hr/>
         <div class="form-group row">
             <div class="col-sm-offset-3 col-sm-6">
@@ -101,6 +101,14 @@
             </div>
         </div>
     </form>
+
+    <div id="personal-review-block" class="row" style="display: none">
+        <div class="col-sm-offset-1 col-sm-10">
+            <hr/>
+            <div class="personal-review-block">
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-sm-offset-1 col-sm-10">
@@ -287,8 +295,9 @@
         var pass = $("#authorization #inputPassword").val();
         if (login == user0["login"] && pass == user0["password"]) {
             $("#authorization").hide();
-            $("#rateForProduct").show();
             authorizedUser = user0;
+            if (!isUserLeavedFeedback(authorizedUser)) $("#rateForProduct").show();
+            else showLeavedFeedback(authorizedUser);
         }
     });
 
@@ -310,6 +319,24 @@
             }
         });
     });
+
+    function isUserLeavedFeedback(user) {
+        for (var i = 0; i < allFeedbacksForProduct.length; i++) {
+            var feedback = allFeedbacksForProduct[i];
+            if (feedback["customerId"] == user["customerId"]) return true;
+        }
+        return false;
+    }
+
+    function showLeavedFeedback(user) {
+        var userFeedback = null;
+        for (var i = 0; i < allFeedbacksForProduct.length; i++) {
+            var feedback = allFeedbacksForProduct[i];
+            if (feedback["customerId"] == user["customerId"]) userFeedback = feedback;
+        }
+
+        showUserFeedback(userFeedback, "forCurrentUser");
+    }
 
     function addFeedbackOfProduct(productId, rating, customerId, description = "") {
         $.ajax({
@@ -337,13 +364,13 @@
     function getFeedbacksByProduct(productId) {
         $.ajax({
             type: "GET",
-            url: "/v1/feedback?productId=" + productId,
+            url: "/v1/feedback?productId=" + productId,//statuses=APPROVED&
             contentType: 'application/json',
             async: true,
             success: function(data) {
                 console.log(data);
                 allFeedbacksForProduct = data;
-                showFeedbacks();
+                showFeedbacks(getApprovedFeedbacksByProduct(data));
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 alert('Error occured!');
@@ -353,57 +380,55 @@
         });
     };
 
-    function showFeedbacks() {
-        
-        for (var i = 0; i < allFeedbacksForProduct.length; i++) {
-            var feedback = allFeedbacksForProduct[i],
-                parsedDate = p = new Date(Date.parse(feedback["createdWhen"])),
-                formattedDate = p.getDate() + "/" + p.getMonth() + "/" + p.getFullYear();
+    function getApprovedFeedbacksByProduct(feedbacks) {
+        var approvedFeedbacks = [];
+        for (var i = 0; i < feedbacks.length; i++) {
+            var feedback = feedbacks[i];
+            if (feedback["status"] == "APPROVED") approvedFeedbacks.push(feedback);
+        }
+        return approvedFeedbacks;
+    }
 
-            // if (i > 0) $(".review-block").append("<hr/>");
-            $(".review-block").append(`
-            <hr/>
-            <div class="row">
+    function showFeedbacks(feedbacks) {
+        for (var i = 0; i < feedbacks.length; i++) {
+            var feedback = feedbacks[i];
+            $(".review-block").append("<hr/>");
+            showUserFeedback(feedback)
+        }
+    }
+
+    function getFormattedDate(feedback) {
+        var parsedDate = p = new Date(Date.parse(feedback["createdWhen"])),
+            formattedDate = p.getDate() + "/" + p.getMonth() + "/" + p.getFullYear();
+        return formattedDate;
+    }
+
+    function showUserFeedback(feedback, mode="default") {
+        var statusStyle = "";
+        if (mode == "forCurrentUser") {
+            if (feedback["status"] == "SUBMITTED") {
+                // statusStyle = 'style="background-color: #FDEFEE"';
+                $(".personal-review-block").addClass("redBackground");
+                $("#personal-review-block").show();
+            }
+        }
+        var reviewBlockHtml = `
+            <div class="row" ` + statusStyle + `>
                 <div class="col-sm-3">
                     <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
                     <div class="review-block-name"><a href="#">` + getUserNameByCustomerId(feedback["customerId"]) + `</a></div>
-                    <div class="review-block-date">` + formattedDate + `</div>
+                    <div class="review-block-date">` + getFormattedDate(feedback) + `</div>
                 </div>
                 <div class="col-sm-9">
                     <div class="review-block-rate">` + getRateBlocksAsHtml(feedback["rating"]) + `</div>
                     <div class="review-block-title" style="margin-top: 22px">` + feedback["description"] + `</div>
                     <div class="review-block-description"></div>
                 </div>
-            </div>
-        `);
-        }
-
-        var description = "here description!",
-            customerName = "Jack",
-            dateCreated = "2020-05-17T12:09:14.3849972",
-            // dateFormat = "dd/mm/yyyy HH:MM:ss",
-            parsedDate = p = new Date(Date.parse(dateCreated)),
-            formattedDate = p.getDate() + "/" + p.getMonth() + "/" + p.getFullYear(),
-            rating = 4,
-            isTheFirstBlock = false,
-            rateBlocks = getRateBlocksAsHtml(rating);
-
-        if (!isTheFirstBlock) $(".review-block").append("<hr/>");
-
-        $(".review-block").append(`
-            <div class="row">
-                <div class="col-sm-3">
-                    <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
-                    <div class="review-block-name"><a href="#">` + customerName + `</a></div>
-                    <div class="review-block-date">` + formattedDate + `</div>
-                </div>
-                <div class="col-sm-9">
-                    <div class="review-block-rate">` + rateBlocks + `</div>
-                    <div class="review-block-title" style="margin-top: 22px">` + description + `</div>
-                    <div class="review-block-description"></div>
-                </div>
-            </div>
-        `);
+            </div>`;
+        if (mode == "forCurrentUser") {
+            if (feedback["status"] == "SUBMITTED") statusStyle = 'style="background-color: #FDEFEE"';
+            $(".personal-review-block").append(reviewBlockHtml);
+        } else $(".review-block").append(reviewBlockHtml);
     }
 
     function getUserNameByCustomerId(customerId) {

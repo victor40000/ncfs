@@ -7,12 +7,13 @@
     background-color:#D8D8D8;
 	color:#FFF;
 }
-.rating-block{
+.rating-block {
 	background-color:#FAFAFA;
 	border:1px solid #EFEFEF;
 	padding:15px 15px 20px 15px;
 	border-radius:3px;
 }
+
 .bold{
 	font-weight:700;
 }
@@ -20,13 +21,18 @@
 	padding-bottom:7px;
 }
 
-.review-block{
+.review-block, .personal-review-block {
 	background-color:#FAFAFA;
 	border:1px solid #EFEFEF;
 	padding:15px;
 	border-radius:3px;
 	margin-bottom:15px;
 }
+
+.redBackground {
+    background-color: #FDEFEE;
+}
+
 .review-block-name{
 	font-size:12px;
 	margin:10px 0;
