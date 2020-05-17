@@ -3,8 +3,437 @@
 <head>
     <title>hello</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<!--    <div th:replace="includes :: includes"></div>-->
+    <link href="../static/css/index.css" th:href="@{/css/index.css}" rel="stylesheet">
+    <!--    <link href="../static/css/bootstrap3.min.css" th:href="@{/css/bootstrap3.min.css}" rel="stylesheet">-->
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="../static/css/startmin.css" th:href="@{/css/startmin.css}" rel="stylesheet">
+
+    <script th:src="@{/js/jquery.min.js}" src="../static/js/jquery.min.js"></script>
+    <script th:src="@{/js/bootstrap.min.js}" src="../static/js/bootstrap.min.js"></script>
+    <!-- <script src="https://rawgit.com/moment/moment/2.2.1/min/moment.min.js"></script> -->
+<!--    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>-->
 </head>
 <body>
-<p th:text="'Hello'"></p>
+<div class="container-fluid center-block row">
+<!--    <div class="row">-->
+        <div class="col-sm-12 col-md-8 col-md-offset-2"><!-- col-lg-6 col-lg-offset-3-->
+
+    <div class="row" style="margin-top: 30px">
+        <div class="col-sm text-center">
+            <button type="button" class="btn btn-secondary" style="margin: 0 30px">About product</button>
+            <button type="button" class="btn btn-secondary" style="margin: 0 30px">Specification</button>
+            <button type="button" class="btn btn-secondary" style="margin: 0 30px">Feedbacks</button>
+        </div>
+    </div>
+
+    <form id="authorization" method="post" role="form" class="row">
+        <hr/>
+        <div class="col-sm-offset-3 col-sm-6">
+            <!--<div class="messages"></div>-->
+            <div class="form-group row">
+                <label for="inputLogin" class="col-sm-2 col-form-label">Login</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputLogin" value="" placeholder="Login">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <input type="button" class="btn btn-success btn-send signIn" value="Sign In">
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <form id="rateForProduct" method="post" action="/signIn" role="form" class="row"><!-- style="display: none"-->
+        <hr/>
+        <div class="form-group row">
+            <div class="col-sm-offset-3 col-sm-6">
+                <label class="col-sm-12 col-form-label"><h4>Rate the product</h4></label>
+            </div>
+        </div>
+        <div class="form-group row rateButtons">
+            <div class="col-sm-offset-3 col-sm-6">
+                <label class="col-sm-3 col-form-label">Evaluation</label>
+                <div class="col-sm-9">
+                    <button type="button" class="btn btn-default btn-sm btn1" aria-label="Left Align" value="1">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm btn2" aria-label="Left Align" value="2">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm btn3" aria-label="Left Align" value="3">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm btn4" aria-label="Left Align" value="4">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm btn5" aria-label="Left Align" value="5">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-offset-3 col-sm-6">
+                <label for="form_message" class="col-sm-3 col-form-label">Comment</label>
+                <div class="col-sm-9">
+                    <textarea id="form_message" name="message" class="form-control comment" maxlength="512" placeholder="Write feedback here. No more than 512 character" rows="4" required="required" data-error="Please,leave us a message."></textarea>
+                </div>
+                <div class="help-block with-errors"></div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-offset-3 col-sm-6">
+                <div class="col-sm-6">
+                    <a href="#"><button type="button" class="btn btn-link" style="padding-left: 0">Feedback moderation rules</button></a>
+                </div>
+                <div class="col-sm-6">
+                    <input type="button" class="btn btn-success btn-send pull-right leaveFeedback" value="Leave feedback">
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-sm-offset-1 col-sm-10">
+            <hr/>
+            <div class="col-sm-6">
+                <h4>Total 3 feedbacks</h4>
+                <div class="pull-left">
+                    <div class="pull-left" style="width:35px; line-height:1;">
+                        <div style="height:9px; margin:5px 0;">5 <span class="glyphicon glyphicon-star"></span></div>
+                    </div>
+                    <div class="pull-left" style="width:180px;">
+                        <div class="progress" style="height:9px; margin:8px 0;">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="5" aria-valuemin="0" aria-valuemax="5" style="width: 1000%">
+                                <span class="sr-only">80% Complete (danger)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pull-right" style="margin-left:10px;">0 feedbacks</div>
+                    <div class="pull-right" style="margin-left:10px; width: 35px;">0%</div>
+                </div>
+                <div class="pull-left">
+                    <div class="pull-left" style="width:35px; line-height:1;">
+                        <div style="height:9px; margin:5px 0;">4 <span class="glyphicon glyphicon-star"></span></div>
+                    </div>
+                    <div class="pull-left" style="width:180px;">
+                        <div class="progress" style="height:9px; margin:8px 0;">
+                            <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5" style="width: 80%">
+                                <span class="sr-only">80% Complete (danger)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pull-right" style="margin-left:10px;">2 feedbacks</div>
+                    <div class="pull-right" style="margin-left:10px; width: 35px;">66%</div>
+                </div>
+                <div class="pull-left">
+                    <div class="pull-left" style="width:35px; line-height:1;">
+                        <div style="height:9px; margin:5px 0;">3 <span class="glyphicon glyphicon-star"></span></div>
+                    </div>
+                    <div class="pull-left" style="width:180px;">
+                        <div class="progress" style="height:9px; margin:8px 0;">
+                            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5" style="width: 60%">
+                                <span class="sr-only">80% Complete (danger)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pull-right" style="margin-left:10px;">1 feedback</div>
+                    <div class="pull-right" style="margin-left:10px; width: 35px;">0%</div>
+                </div>
+                <div class="pull-left">
+                    <div class="pull-left" style="width:35px; line-height:1;">
+                        <div style="height:9px; margin:5px 0;">2 <span class="glyphicon glyphicon-star"></span></div>
+                    </div>
+                    <div class="pull-left" style="width:180px;">
+                        <div class="progress" style="height:9px; margin:8px 0;">
+                            <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5" style="width: 40%">
+                                <span class="sr-only">80% Complete (danger)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pull-right" style="margin-left:10px;">0 feedbacks</div>
+                    <div class="pull-right" style="margin-left:10px; width: 35px;">0%</div>
+                </div>
+                <div class="pull-left">
+                    <div class="pull-left" style="width:35px; line-height:1;">
+                        <div style="height:9px; margin:5px 0;">1 <span class="glyphicon glyphicon-star"></span></div>
+                    </div>
+                    <div class="pull-left" style="width:180px;">
+                        <div class="progress" style="height:9px; margin:8px 0;">
+                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="5" style="width: 20%">
+                                <span class="sr-only">80% Complete (danger)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pull-right" style="margin-left:10px;">0 feedbacks</div>
+                    <div class="pull-right" style="margin-left:10px; width: 35px;">0%</div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="rating-block">
+                    <h4>Average user rating</h4>
+                    <h2 class="bold padding-bottom-7">4.3 <small>/ 5</small></h2>
+                    <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-offset-1 col-sm-10">
+            <hr/>
+            <div class="review-block">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
+                        <div class="review-block-name"><a href="#">nktailor</a></div>
+                        <div class="review-block-date">January 29, 2016</div>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="review-block-rate">
+                            <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                        <div class="review-block-title">this was nice in buy</div>
+                        <div class="review-block-description">this was nice in buy. this was nice in buy. this was nice in buy. this was nice in buy this was nice in buy this was nice in buy this was nice in buy this was nice in buy</div>
+                    </div>
+                </div>
+                <hr/>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
+                        <div class="review-block-name"><a href="#">nktailor</a></div>
+                        <div class="review-block-date">January 29, 2016</div>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="review-block-rate">
+                            <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                        <div class="review-block-title">this was nice in buy</div>
+                        <div class="review-block-description">this was nice in buy. this was nice in buy. this was nice in buy. this was nice in buy this was nice in buy this was nice in buy this was nice in buy this was nice in buy</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+<!--    </div>-->
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+    var currentProductId = 1;
+    var user0 = {"login": "user0", "password": 1, "customerId": 1};
+    var users = [
+        {"login": "user0", "password": 1, "customerId": 1, "name": "John"},
+        {"login": "user1", "password": 1, "customerId": 2, "name": "Jack"}
+    ]
+    var authorizedUser = null;
+    var allFeedbacksForProduct = null;
+    var choosedRate = null;
+    getFeedbacksByProduct(currentProductId);
+
+    $("#authorization .signIn").click(function() {
+        var login = $("#authorization #inputLogin").val();
+        var pass = $("#authorization #inputPassword").val();
+        if (login == user0["login"] && pass == user0["password"]) {
+            $("#authorization").hide();
+            $("#rateForProduct").show();
+            authorizedUser = user0;
+        }
+    });
+
+    $("#rateForProduct .leaveFeedback").click(function() {
+        if (choosedRate == null) alert("Вы не указали оценку в отзыве!");
+        if (authorizedUser != null && choosedRate != null) {
+            var description = $("#rateForProduct .comment").val();
+            addFeedbackOfProduct(currentProductId, choosedRate, authorizedUser["customerId"], description);
+        } 
+    });
+
+    $("#rateForProduct .rateButtons .btn").click(function() {
+        choosedRate = $(this).val();
+        $("#rateForProduct .rateButtons .btn").each(function (index, el) {
+            if ($(el).val() <= choosedRate && $(el).hasClass("btn-default")) {
+                $(el).removeClass("btn-default").addClass("btn-warning");
+            } else if ($(el).val() > choosedRate && $(el).hasClass("btn-warning")) {
+                $(el).removeClass("btn-warning").addClass("btn-default");
+            }
+        });
+    });
+
+    function addFeedbackOfProduct(productId, rating, customerId, description = "") {
+        $.ajax({
+            type: "POST",
+            url: "/v1/feedback/",
+            data: JSON.stringify({
+                'productId': productId,
+                'customerId': customerId,
+                'rating': rating,
+                'description': description
+            }),
+            contentType: 'application/json',
+            async: true,
+            success: function(data) {
+                console.log(data);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error occured!');
+                console.log('Post dump error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    function getFeedbacksByProduct(productId) {
+        $.ajax({
+            type: "GET",
+            url: "/v1/feedback?productId=" + productId,
+            contentType: 'application/json',
+            async: true,
+            success: function(data) {
+                console.log(data);
+                allFeedbacksForProduct = data;
+                showFeedbacks();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error occured!');
+                console.log('Post dump error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    function showFeedbacks() {
+        
+        for (var i = 0; i < allFeedbacksForProduct.length; i++) {
+            var feedback = allFeedbacksForProduct[i],
+                parsedDate = p = new Date(Date.parse(feedback["createdWhen"])),
+                formattedDate = p.getDate() + "/" + p.getMonth() + "/" + p.getFullYear();
+
+            // if (i > 0) $(".review-block").append("<hr/>");
+            $(".review-block").append(`
+            <hr/>
+            <div class="row">
+                <div class="col-sm-3">
+                    <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
+                    <div class="review-block-name"><a href="#">` + getUserNameByCustomerId(feedback["customerId"]) + `</a></div>
+                    <div class="review-block-date">` + formattedDate + `</div>
+                </div>
+                <div class="col-sm-9">
+                    <div class="review-block-rate">` + getRateBlocksAsHtml(feedback["rating"]) + `</div>
+                    <div class="review-block-title" style="margin-top: 22px">` + feedback["description"] + `</div>
+                    <div class="review-block-description"></div>
+                </div>
+            </div>
+        `);
+        }
+
+        var description = "here description!",
+            customerName = "Jack",
+            dateCreated = "2020-05-17T12:09:14.3849972",
+            // dateFormat = "dd/mm/yyyy HH:MM:ss",
+            parsedDate = p = new Date(Date.parse(dateCreated)),
+            formattedDate = p.getDate() + "/" + p.getMonth() + "/" + p.getFullYear(),
+            rating = 4,
+            isTheFirstBlock = false,
+            rateBlocks = getRateBlocksAsHtml(rating);
+
+        if (!isTheFirstBlock) $(".review-block").append("<hr/>");
+
+        $(".review-block").append(`
+            <div class="row">
+                <div class="col-sm-3">
+                    <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
+                    <div class="review-block-name"><a href="#">` + customerName + `</a></div>
+                    <div class="review-block-date">` + formattedDate + `</div>
+                </div>
+                <div class="col-sm-9">
+                    <div class="review-block-rate">` + rateBlocks + `</div>
+                    <div class="review-block-title" style="margin-top: 22px">` + description + `</div>
+                    <div class="review-block-description"></div>
+                </div>
+            </div>
+        `);
+    }
+
+    function getUserNameByCustomerId(customerId) {
+        var name;
+        for (var i = 0; i < users.length; i++) {
+            if (users[i]["customerId"] == customerId) name = users[i]["name"];
+        }
+        return name;
+    }
+
+    function getRateBlocksAsHtml(rating) {
+        var rateBlocks = "";
+        for (var i = 0; i < 5; i++) {
+            if (i < rating) {
+                rateBlocks += `
+                    <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                `;
+            } else {
+                rateBlocks += `
+                    <button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                `;
+            }
+        }
+
+        return rateBlocks;
+    }
+</script>
 </body>
 </html>
