@@ -51,6 +51,14 @@
             </div>
         </form>
 
+        <div id="myDeclinedFeedback" class="row" style="display: none">
+            <div class="col-sm-offset-2 col-sm-8">
+                <hr/>
+                <div class="review-block">
+                </div>
+            </div>
+        </div>
+
         <form id="rateForProduct" method="post" action="/signIn" role="form" class="row" style="display: none">
             <hr/>
             <div class="form-group row">
@@ -100,6 +108,114 @@
                 </div>
             </div>
         </form>
+
+        <form id="rateUpdateForProduct" method="post" action="/signIn" role="form" class="row" style="display: none">
+            <hr/>
+            <div class="form-group row">
+                <div class="col-sm-offset-3 col-sm-6">
+                    <label class="col-sm-12 col-form-label"><h4>Rate the product</h4></label>
+                </div>
+            </div>
+            <div class="form-group row rateButtons">
+                <div class="col-sm-offset-3 col-sm-6">
+                    <label class="col-sm-3 col-form-label">Evaluation</label>
+                    <div class="col-sm-9">
+                        <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" value="1">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" value="2">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" value="3">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" value="4">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" value="5">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-offset-3 col-sm-6">
+                    <label for="form_message2" class="col-sm-3 col-form-label">Comment</label>
+                    <div class="col-sm-9">
+                        <textarea id="form_message2" name="message" class="form-control comment" maxlength="512" placeholder="Write feedback here. No more than 512 character" rows="4" required="required" data-error="Please,leave us a message."></textarea>
+                    </div>
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-offset-3 col-sm-6">
+                    <div class="col-sm-6">
+                        <a href="#"><button type="button" class="btn btn-link" style="padding-left: 0">Feedback moderation rules</button></a>
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="button" class="btn btn-success btn-send pull-right leaveFeedback" value="Update your feedback">
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <form id="rateInProgressForProduct" method="post" action="/signIn" role="form" class="row" style="display: none">
+            <hr/>
+            <div class="row">
+                <div class="col-sm-offset-3 col-sm-6 form-group-padding">
+                    <label class="col-sm-12 col-form-label"><h4 class="pull-left">Rate the product</h4><span class="pull-right" style="color: red; padding-top: 12px;">In moderation</span></label>
+                </div>
+            </div>
+            <div class="row rateButtons">
+                <div class="col-sm-offset-3 col-sm-6 form-group-padding">
+                    <label class="col-sm-3 col-form-label">Evaluation</label>
+                    <div class="col-sm-9">
+                        <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" value="1">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" value="2">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" value="3">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" value="4">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" value="5">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-offset-3 col-sm-6 form-group-padding">
+                    <label for="form_message3" class="col-sm-3 col-form-label">Comment</label>
+                    <div class="col-sm-9">
+                        <textarea id="form_message3" name="message" class="form-control comment" maxlength="512" placeholder="Write feedback here. No more than 512 character" rows="4" data-error="Please,leave us a message." readonly></textarea>
+                    </div>
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-offset-3 col-sm-6 form-group-padding">
+                    <div class="col-sm-6">
+                        <a href="#"><button type="button" class="btn btn-link" style="padding-left: 0">Feedback moderation rules</button></a>
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="button" class="btn btn-default btn-send pull-right leaveFeedback" value="Update your feedback">
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div id="myApprovedFeedback" class="row" style="display: none">
+            <div class="col-sm-offset-2 col-sm-8">
+                <hr/>
+                <div class="review-block">
+                </div>
+            </div>
+        </div>
 
         <div id="personal-review-block" class="row" style="display: none">
             <div class="col-sm-offset-1 col-sm-10">
@@ -209,8 +325,8 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-sm-offset-1 col-sm-10">
+        <div id="otherFeedbacks" class="row">
+            <div class="col-sm-offset-2 col-sm-8">
                 <hr/>
                 <div class="review-block">
                 </div>
@@ -232,6 +348,7 @@
     var authorizedUser = null;
     var allFeedbacksForProduct = null;
     var choosedRate = null;
+    var currentFeedbackId = null;
     getFeedbacksByProduct(currentProductId);
 
     $("#authorization .signIn").click(function() {
@@ -265,9 +382,30 @@
         } 
     });
 
+    $("#rateUpdateForProduct .leaveFeedback").click(function() {
+        if (choosedRate == null) alert("Вы не указали оценку в отзыве!");
+        if (authorizedUser != null && choosedRate != null) {
+            var description = $("#rateUpdateForProduct .comment").val();
+            if (currentFeedbackId != null)
+                updateFeedbackOfProduct(currentFeedbackId, choosedRate, description);
+            else alert ("currentFeedbackId не установлен!");
+        } 
+    });
+
     $("#rateForProduct .rateButtons .btn").click(function() {
         choosedRate = $(this).val();
         $("#rateForProduct .rateButtons .btn").each(function (index, el) {
+            if ($(el).val() <= choosedRate && $(el).hasClass("btn-default")) {
+                $(el).removeClass("btn-default").addClass("btn-warning");
+            } else if ($(el).val() > choosedRate && $(el).hasClass("btn-warning")) {
+                $(el).removeClass("btn-warning").addClass("btn-default");
+            }
+        });
+    });
+
+    $("#rateUpdateForProduct .rateButtons .btn").click(function() {
+        choosedRate = $(this).val();
+        $("#rateUpdateForProduct .rateButtons .btn").each(function (index, el) {
             if ($(el).val() <= choosedRate && $(el).hasClass("btn-default")) {
                 $(el).removeClass("btn-default").addClass("btn-warning");
             } else if ($(el).val() > choosedRate && $(el).hasClass("btn-warning")) {
@@ -291,7 +429,58 @@
             if (feedback["customerId"] == user["customerId"]) userFeedback = feedback;
         }
 
-        showUserFeedback(userFeedback, "forCurrentUser");
+        if (userFeedback["status"] == "SUBMITTED") {
+            showUserFeedbackOnSubmitted(userFeedback);
+        } else if (userFeedback["status"] == "IN_PROGRESS") {
+            showUserFeedbackOnInProgress(userFeedback);
+        } else if (userFeedback["status"] == "APPROVED") {
+            showUserFeedbackOnApproved(userFeedback);
+        } else if (userFeedback["status"] == "DECLINED") {
+            $(".personal-review-block").addClass("redBackground");
+            $("#personal-review-block").show();
+            showUserFeedbackOnDecline(userFeedback);
+        }
+    }
+
+    function showUserFeedbackOnSubmitted(feedback) {
+        choosedRate = feedback["rating"];
+        currentFeedbackId = feedback["id"];
+        $("#rateUpdateForProduct").show();
+        $("#rateUpdateForProduct .rateButtons .btn").each(function (index, el) {
+            if ($(el).val() <= choosedRate && $(el).hasClass("btn-default")) {
+                $(el).removeClass("btn-default").addClass("btn-warning");
+            }
+        });
+        $("#rateUpdateForProduct .comment").val(feedback["description"]);
+    }
+
+    function showUserFeedbackOnInProgress(feedback) {
+        choosedRate = feedback["rating"];
+        currentFeedbackId = feedback["id"];
+        $("#rateInProgressForProduct").show();
+        $("#rateInProgressForProduct .rateButtons .btn").each(function (index, el) {
+            if ($(el).val() <= choosedRate && $(el).hasClass("btn-default")) {
+                $(el).removeClass("btn-default").addClass("btn-warning");
+            }
+        });
+        $("#rateInProgressForProduct .comment").val(feedback["description"]);
+        $("#rateInProgressForProduct .col-sm-6").addClass("redBackground");
+    }
+
+    function showUserFeedbackOnApproved(feedback) {
+        $("#myApprovedFeedback .review-block").append(getReviewBlock(feedback));
+        $("#myApprovedFeedback .review-block").addClass("greenBackground");
+        $("#myApprovedFeedback .review-block .review-block-rate").append(`<span class="pull-right" style="padding-top: 3px; color: green;">Approved</span>`);
+        $("#myApprovedFeedback").show();
+    }
+
+    function showUserFeedbackOnDecline(feedback) {
+        $("#myDeclinedFeedback .review-block").append(getReviewBlock(feedback));
+        $("#myDeclinedFeedback .review-block").addClass("redBackground");
+        $("#myDeclinedFeedback .review-block .review-block-rate").append(`<span class="pull-right" style="padding-top: 3px; color: red;">Declined</span>`);
+        $("#myDeclinedFeedback .review-block .row").append(`<div class="review-block-description col-sm-12" style="font-size: 14px; padding-top: 10px;">Text from moderator: <span style="color: red;">` + feedback["declineMessage"] + `</span><br>Please, add new one below</div>`);
+        $("#myDeclinedFeedback").show();
+        $("#rateForProduct").show();
     }
 
     function addFeedbackOfProduct(productId, rating, customerId, description = "") {
@@ -301,6 +490,27 @@
             data: JSON.stringify({
                 'productId': productId,
                 'customerId': customerId,
+                'rating': rating,
+                'description': description
+            }),
+            contentType: 'application/json',
+            async: true,
+            success: function(data) {
+                console.log(data);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error occured!');
+                console.log('Post dump error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    function updateFeedbackOfProduct(feedbackId, rating, description = "") {
+        $.ajax({
+            type: "PUT",
+            url: "/v1/feedback/" + feedbackId,
+            data: JSON.stringify({
                 'rating': rating,
                 'description': description
             }),
@@ -388,8 +598,8 @@
     function showFeedbacks(feedbacks) {
         for (var i = 0; i < feedbacks.length; i++) {
             var feedback = feedbacks[i];
-            if (i > 0) $(".review-block").append("<hr/>");
-            showUserFeedback(feedback)
+            if (i > 0) $("#otherFeedbacks .review-block").append("<hr/>");
+            $("#otherFeedbacks .review-block").append(getReviewBlock(feedback));
         }
     }
 
@@ -399,17 +609,9 @@
         return formattedDate;
     }
 
-    function showUserFeedback(feedback, mode="default") {
-        var statusStyle = "";
-        if (mode == "forCurrentUser") {
-            if (feedback["status"] == "SUBMITTED") {
-                // statusStyle = 'style="background-color: #FDEFEE"';
-                $(".personal-review-block").addClass("redBackground");
-                $("#personal-review-block").show();
-            }
-        }
-        var reviewBlockHtml = `
-            <div class="row" ` + statusStyle + `>
+    function getReviewBlock(feedback) {
+        return `
+            <div class="row">
                 <div class="col-sm-3">
                     <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
                     <div class="review-block-name"><a href="#">` + getUserNameByCustomerId(feedback["customerId"]) + `</a></div>
@@ -421,10 +623,6 @@
                     <div class="review-block-description"></div>
                 </div>
             </div>`;
-        if (mode == "forCurrentUser") {
-            // if (feedback["status"] == "SUBMITTED") statusStyle = 'style="background-color: #FDEFEE"';
-            $(".personal-review-block").append(reviewBlockHtml);
-        } else $(".review-block").append(reviewBlockHtml);
     }
 
     function getUserNameByCustomerId(customerId) {
