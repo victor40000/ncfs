@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Moderator page</title>
+    <meta charset="UTF-8">
+    <title>Change status from 'In progress' to another</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<!--    <div th:replace="includes :: includes"></div>-->
+    <!--    <div th:replace="includes :: includes"></div>-->
     <link href="../static/css/index.css" th:href="@{/css/index.css}" rel="stylesheet">
     <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link href="../static/css/startmin.css" th:href="@{/css/startmin.css}" rel="stylesheet">
@@ -26,7 +27,7 @@
         <div class="row">
             <hr>
             <div class="col-sm-offset-1 col-sm-10">
-                <a href="/moderate"><button type="button" class="btn btn-link" style="padding-left: 0">Go to picked feedbacks to moderate them</button></a>
+                <a href="/moderator"><button type="button" class="btn btn-link" style="padding-left: 0">Get feedbacks in status 'In progress'</button></a>
             </div>
         </div>
 
@@ -75,48 +76,17 @@
     var authorizedUser = null;
     var allFeedbacksForProduct = null;
     var choosedRate = null;
-    getSubmittedFeedbacks();
 
     $("#authorization .signIn").click(function() {
         var login = $("#authorization #inputLogin").val();
         var pass = $("#authorization #inputPassword").val();
         if (isAuthorized(login, pass)) {
             $("#authorization").hide();
+            getInProgressFeedbacks(authorizedUser["customerId"]);
             // if (!isUserLeavedFeedback(authorizedUser)) $("#rateForProduct").show();
             // else showLeavedFeedback(authorizedUser);
         }
     });
-
-    // $(".review-block .sendToInProgress").click(function() {
-    $(document).on('click','.review-block .sendToInProgress', function() {
-        var oneFeedback = $(this).parent().parent();
-        var feedbackId = $(oneFeedback).find("input[name=feedbackId]").val();
-        changeStatusToInProgress(feedbackId, authorizedUser["customerId"]);
-        var hr = $(oneFeedback).next();
-        $(oneFeedback).remove();
-        if ($(hr).is("hr")) $(hr).remove();
-    });
-
-    function changeStatusToInProgress(feedbackId, moderatorId) {
-        $.ajax({
-            type: "PUT",
-            url: "/v1/moderation/feedback/" + feedbackId,
-            data: JSON.stringify({
-                'status': 'IN_PROGRESS',
-                'moderatorId': moderatorId
-            }),
-            contentType: 'application/json',
-            async: true,
-            success: function(data) {
-                console.log(data);
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                alert('Error occured!');
-                console.log('Post dump error: ' +
-                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
-            }
-        });
-    }
 
     function isAuthorized(login, pass) {
         for (var i = 0; i < users.length; i++) {
@@ -132,10 +102,11 @@
         return false;
     }
 
-    function getSubmittedFeedbacks() {
+    function getInProgressFeedbacks(moderatorId) {
+        console.log(moderatorId);
         $.ajax({
             type: "GET",
-            url: "/v1/feedback?statuses=SUBMITTED",
+            url: "/v1/feedback?statuses=IN_PROGRESS&moderatorId=" + moderatorId,
             contentType: 'application/json',
             async: true,
             success: function(data) {
@@ -159,6 +130,83 @@
         }
     }
 
+    $(document).on('click','.review-block .sendToApproved', function() {
+        var oneFeedback = $(this).parent().parent();
+        var feedbackId = $(oneFeedback).find("input[name=feedbackId]").val();
+        changeStatus(feedbackId, authorizedUser["customerId"], "APPROVED");
+        var hr = $(oneFeedback).next();
+        $(oneFeedback).remove();
+        if ($(hr).is("hr")) $(hr).remove();
+    });
+
+    $(document).on('click','.review-block .sendToSubmitted', function() {
+        var oneFeedback = $(this).parent().parent();
+        var feedbackId = $(oneFeedback).find("input[name=feedbackId]").val();
+        changeStatus(feedbackId, authorizedUser["customerId"], "SUBMITTED");
+        var hr = $(oneFeedback).next();
+        $(oneFeedback).remove();
+        if ($(hr).is("hr")) $(hr).remove();
+    });
+
+    $(document).on('click','.review-block .sendToDeclined', function() {
+        var oneFeedback = $(this).parent().parent();
+        var feedbackId = $(oneFeedback).find("input[name=feedbackId]").val();
+        var declineMessage = $(oneFeedback).find("#declineMessage").val();
+        console.log(declineMessage);
+        if (declineMessage != "") {
+            console.log(declineMessage);
+            changeStatusToDecline(feedbackId, authorizedUser["customerId"], declineMessage);
+            var hr = $(oneFeedback).next();
+            $(oneFeedback).remove();
+            if ($(hr).is("hr")) $(hr).remove();
+        } else alert("Не заполнена обязательная причина отклонения отзыва!");
+        
+    });
+
+    function changeStatus(feedbackId, moderatorId, status) {
+        if (status == "SUBMITTED" || status == "APPROVED")
+        $.ajax({
+            type: "PUT",
+            url: "/v1/moderation/feedback/" + feedbackId,
+            data: JSON.stringify({
+                'status': status,
+                'moderatorId': moderatorId
+            }),
+            contentType: 'application/json',
+            async: true,
+            success: function(data) {
+                console.log(data);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error occured!');
+                console.log('Post dump error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    }
+
+    function changeStatusToDecline(feedbackId, moderatorId, declineMessage) {
+        $.ajax({
+            type: "PUT",
+            url: "/v1/moderation/feedback/" + feedbackId,
+            data: JSON.stringify({
+                'status': 'DECLINED',
+                'moderatorId': moderatorId,
+                'declineMessage': declineMessage
+            }),
+            contentType: 'application/json',
+            async: true,
+            success: function(data) {
+                console.log(data);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error occured!');
+                console.log('Post dump error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    }
+
     function getReviewBlock(feedback) {
         return `
             <div class="row">
@@ -174,7 +222,10 @@
                     <div class="review-block-description"></div>
                 </div>
                 <div class="col-sm-12">
-                    <input type="button" class="btn btn-success btn-send sendToInProgress" value="Send to 'In progress'">
+                    <input type="button" class="btn btn-success btn-send sendToApproved" value="Send to 'Approved'">
+                    <input type="button" class="btn btn-warning btn-send sendToSubmitted" value="Stop review (to 'Submitted')">
+                    <input type="button" class="btn btn-danger btn-send sendToDeclined" value="Send to 'Declined'">
+                    <input type="text" class="form-control" id="declineMessage" value="" placeholder="Type decline message here" style="margin-top: 10px;">
                 </div>
             </div>`;
     }
