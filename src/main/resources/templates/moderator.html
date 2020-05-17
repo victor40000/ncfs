@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Moderator page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<!--    <div th:replace="includes :: includes"></div>-->
+    <link href="../static/css/index.css" th:href="@{/css/index.css}" rel="stylesheet">
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="../static/css/startmin.css" th:href="@{/css/startmin.css}" rel="stylesheet">
+    <script th:src="@{/js/jquery.min.js}" src="../static/js/jquery.min.js"></script>
+    <script th:src="@{/js/bootstrap.min.js}" src="../static/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container-fluid center-block row">
+    <div class="col-sm-12 col-md-8 col-md-offset-2">
+
+        <div class="row" style="margin-top: 30px">
+            <div class="col-sm text-center">
+                <button type="button" class="btn btn-secondary" style="margin: 0 30px">About product</button>
+                <button type="button" class="btn btn-secondary" style="margin: 0 30px">Specification</button>
+                <button type="button" class="btn btn-secondary" style="margin: 0 30px">Feedbacks</button>
+            </div>
+        </div>
+
+        <form id="authorization" method="post" role="form" class="row">
+            <hr/>
+            <div class="col-sm-offset-3 col-sm-6">
+                <div class="form-group row">
+                    <label for="inputLogin" class="col-sm-2 col-form-label">Login</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputLogin" value="" placeholder="Login">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <input type="button" class="btn btn-success btn-send signIn" value="Sign In">
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="row">
+            <div class="col-sm-offset-1 col-sm-10">
+                <hr/>
+                <div class="review-block">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+    // var currentProductId = 1;
+    var users = [
+        {"login": "user0", "password": 1, "customerId": 1, "name": "John", "role": 0},
+        {"login": "user1", "password": 1, "customerId": 2, "name": "Jack", "role": 0},
+        {"login": "user2", "password": 1, "customerId": 3, "name": "James", "role": 0},
+        {"login": "user3", "password": 1, "customerId": 4, "name": "Josh", "role": 1},
+        {"login": "user4", "password": 1, "customerId": 5, "name": "Joshua", "role": 1}
+    ]
+    var authorizedUser = null;
+    var allFeedbacksForProduct = null;
+    var choosedRate = null;
+    getSubmittedFeedbacks();
+
+    $("#authorization .signIn").click(function() {
+        var login = $("#authorization #inputLogin").val();
+        var pass = $("#authorization #inputPassword").val();
+        if (isAuthorized(login, pass)) {
+            $("#authorization").hide();
+            // if (!isUserLeavedFeedback(authorizedUser)) $("#rateForProduct").show();
+            // else showLeavedFeedback(authorizedUser);
+        }
+    });
+
+    function isAuthorized(login, pass) {
+        for (var i = 0; i < users.length; i++) {
+            var user = users[i];
+            if (user["login"] == login) {
+                if (user["password"] == pass) {
+                    authorizedUser = user;
+                    return true;
+                } else alert("Неверный пароль!");
+            }
+        }
+        return false;
+    }
+
+    function getSubmittedFeedbacks() {
+        $.ajax({
+            type: "GET",
+            url: "/v1/feedback?statuses=SUBMITTED",
+            contentType: 'application/json',
+            async: true,
+            success: function(data) {
+                console.log(data);
+                allFeedbacksForProduct = data;
+                showFeedbacks(data);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error occured!');
+                console.log('Post dump error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    function showFeedbacks(feedbacks) {
+        for (var i = 0; i < feedbacks.length; i++) {
+            var feedback = feedbacks[i];
+            if (i > 0) $(".review-block").append("<hr/>");
+            showUserFeedback(feedback)
+        }
+    }
+
+    function showUserFeedback(feedback, mode="default") {
+        var statusStyle = "";
+        // if (mode == "forCurrentUser") {
+        //     if (feedback["status"] == "SUBMITTED") {
+        //         // statusStyle = 'style="background-color: #FDEFEE"';
+        //         $(".personal-review-block").addClass("redBackground");
+        //         $("#personal-review-block").show();
+        //     }
+        // }
+        var reviewBlockHtml = `
+            <div class="row" ` + statusStyle + `>
+                <div class="col-sm-3">
+                    <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
+                    <div class="review-block-name"><a href="#">` + getUserNameByCustomerId(feedback["customerId"]) + `</a></div>
+                    <div class="review-block-date">` + getFormattedDate(feedback) + `</div>
+                </div>
+                <div class="col-sm-9">
+                    <div class="review-block-rate">` + getRateBlocksAsHtml(feedback["rating"]) + `</div>
+                    <div class="review-block-title" style="margin-top: 22px">` + feedback["description"] + `</div>
+                    <div class="review-block-description"></div>
+                </div>
+            </div>`;
+        // if (mode == "forCurrentUser") {
+        //     // if (feedback["status"] == "SUBMITTED") statusStyle = 'style="background-color: #FDEFEE"';
+        //     $(".personal-review-block").append(reviewBlockHtml);
+        // } else 
+        $(".review-block").append(reviewBlockHtml);
+    }
+
+    function getUserNameByCustomerId(customerId) {
+        var name;
+        for (var i = 0; i < users.length; i++) {
+            if (users[i]["customerId"] == customerId) name = users[i]["name"];
+        }
+        return name;
+    }
+
+    function getFormattedDate(feedback) {
+        var parsedDate = p = new Date(Date.parse(feedback["createdWhen"])),
+            formattedDate = p.getDate() + "/" + (p.getMonth()+1) + "/" + p.getFullYear();
+        return formattedDate;
+    }
+
+    function getRateBlocksAsHtml(rating) {
+        var rateBlocks = "";
+        for (var i = 0; i < 5; i++) {
+            if (i < rating) {
+                rateBlocks += `
+                    <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                `;
+            } else {
+                rateBlocks += `
+                    <button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                `;
+            }
+        }
+
+        return rateBlocks;
+    }
+</script>
+</body>
+</html>
