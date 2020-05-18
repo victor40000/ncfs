@@ -100,7 +100,7 @@
             <div class="form-group row">
                 <div class="col-sm-offset-3 col-sm-6">
                     <div class="col-sm-6">
-                        <a href="#"><button type="button" class="btn btn-link" style="padding-left: 0">Feedback moderation rules</button></a>
+                        <a href="/feedbackRules"><button type="button" class="btn btn-link" style="padding-left: 0">Feedback moderation rules</button></a>
                     </div>
                     <div class="col-sm-6">
                         <input type="button" class="btn btn-success btn-send pull-right leaveFeedback" value="Leave feedback">
@@ -585,7 +585,14 @@
             var feedback = feedbacks[i];
             if (feedback["status"] == "APPROVED") approvedFeedbacks.push(feedback);
         }
-        return approvedFeedbacks;
+        return approvedFeedbacks.sort(compare);
+    }
+
+    function compare(a, b) {
+        var ac = new Date(Date.parse(a["createdWhen"])),
+            bc = new Date(Date.parse(b["createdWhen"]))
+        if (ac < bc) return 1;
+        else return -1;
     }
 
     function showFeedbacks(feedbacks) {
