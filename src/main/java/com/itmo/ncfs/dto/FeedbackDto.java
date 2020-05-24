@@ -4,18 +4,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.itmo.ncfs.dto.cases.NewCase;
 import com.itmo.ncfs.dto.cases.UpdateCase;
 import com.itmo.ncfs.dto.cases.UpdateStatusCase;
-import com.itmo.ncfs.entities.Product;
-import com.itmo.ncfs.entities.Transition;
-import com.itmo.ncfs.entities.User;
 import com.itmo.ncfs.enums.FeedbackStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -24,6 +20,7 @@ public class FeedbackDto {
 
     public static final String MANDATORY_FIELD_ERROR = "is mandatory";
     public static final String INCORRECT_RATING_RANGE_ERROR = "rating should be a number in range [1, 5]";
+    public static final String MAX_DESCRIPTION_SIZE_ERROR = "max description length is 512";
 
     private Integer id;
 
@@ -31,11 +28,14 @@ public class FeedbackDto {
     @Range(min = 1, max = 5, groups = {NewCase.class, UpdateCase.class}, message = INCORRECT_RATING_RANGE_ERROR)
     private Integer rating;
 
+    @Max(value = 512, message = MAX_DESCRIPTION_SIZE_ERROR)
     private String description;
 
     private String declineMessage;
 
     private LocalDateTime createdWhen;
+
+    private LocalDateTime updatedWhen;
 
     @NotNull(groups = {UpdateStatusCase.class}, message = MANDATORY_FIELD_ERROR)
     private FeedbackStatus status;

@@ -4,9 +4,15 @@ import com.itmo.ncfs.dto.FeedbackDto;
 import com.itmo.ncfs.entities.Feedback;
 import com.itmo.ncfs.entities.Transition;
 import com.itmo.ncfs.enums.FeedbackStatus;
+import com.itmo.ncfs.exceptions.ShoppingPortalException;
 import com.itmo.ncfs.exceptions.ValidationException;
+import com.itmo.ncfs.integrations.notification.NotificationRestClient;
+import com.itmo.ncfs.integrations.shopping.ShoppingRestClient;
+import com.itmo.ncfs.integrations.shopping.dto.GetCustomerResponse;
+import com.itmo.ncfs.integrations.shopping.dto.GetProductResponse;
 import com.itmo.ncfs.repos.FeedbackRepo;
 import com.itmo.ncfs.repos.TransitionRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +22,11 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class FeedbackService {
 
@@ -32,20 +38,34 @@ public class FeedbackService {
     private final FeedbackValidator validator;
     private final FeedbackRepo feedbackRepo;
     private final TransitionRepo transitionRepo;
+    private final NotificationRestClient notificationRestClient;
+    private final ShoppingRestClient shoppingRestClient;
 
     @Autowired
-    public FeedbackService(FeedbackValidator validator, FeedbackRepo feedbackRepo, TransitionRepo transitionRepo) {
+    public FeedbackService(FeedbackValidator validator,
+                           FeedbackRepo feedbackRepo,
+                           TransitionRepo transitionRepo,
+                           NotificationRestClient notificationRestClient,
+                           ShoppingRestClient shoppingRestClient) {
         this.validator = validator;
         this.feedbackRepo = feedbackRepo;
         this.transitionRepo = transitionRepo;
+        this.notificationRestClient = notificationRestClient;
+        this.shoppingRestClient = shoppingRestClient;
     }
 
     public FeedbackDto addFeedback(FeedbackDto feedbackDto) {
         validator.validateAddFeedbackCase(feedbackDto);
         Feedback feedback = getFeedback(feedbackDto);
         feedback.setCreatedWhen(LocalDateTime.now());
+        feedback.setUpdatedWhen(feedback.getCreatedWhen());
         feedback.setId(null);
         feedback.setStatus(FeedbackStatus.SUBMITTED);
+
+        //publish status without description
+        if (feedback.getDescription() == null || feedback.getDescription().isEmpty()) {
+            feedback.setStatus(FeedbackStatus.APPROVED);
+        }
         return getFeedbackDto(feedbackRepo.save(feedback));
     }
 
@@ -55,6 +75,10 @@ public class FeedbackService {
         validator.validateChangeFeedbackCase(feedback);
         feedback.setRating(feedbackDto.getRating());
         feedback.setDescription(feedbackDto.getDescription());
+        feedback.setUpdatedWhen(LocalDateTime.now());
+        if (feedback.getDescription() == null || feedback.getDescription().isEmpty()) {
+            feedback.setStatus(FeedbackStatus.APPROVED);
+        }
         return getFeedbackDto(feedbackRepo.save(feedback));
     }
 
@@ -69,15 +93,17 @@ public class FeedbackService {
         if (FeedbackStatus.IN_PROGRESS.equals(feedbackDto.getStatus())) {
             feedback.setModeratedBy(feedbackDto.getModeratorId());
         }
-        if (FeedbackStatus.DECLINED.equals(feedbackDto.getStatus())){
+        if (FeedbackStatus.DECLINED.equals(feedbackDto.getStatus())) {
             feedback.setDeclineMessage(feedbackDto.getDeclineMessage());
         }
         transition.setSource(feedback.getStatus());
         transition.setDestination(feedbackDto.getStatus());
-        transition.setDate(new Timestamp(System.currentTimeMillis()));
+        transition.setDate(LocalDateTime.now());
         feedback.setStatus(feedbackDto.getStatus());
         transitionRepo.save(transition);
-        return getFeedbackDto(feedbackRepo.save(feedback));
+        FeedbackDto result = getFeedbackDto(feedbackRepo.save(feedback));
+        sendNotification(result);
+        return result;
     }
 
     public List<FeedbackDto> getFeedback(LocalDateTime startDate,
@@ -147,13 +173,14 @@ public class FeedbackService {
                 .mapToInt(Integer::intValue)
                 .sum();
 
-        return !feedback.isEmpty() ? sum/feedback.size() : 0.0;
+        return !feedback.isEmpty() ? sum / feedback.size() : 0.0;
     }
 
     private FeedbackDto getFeedbackDto(Feedback feedback) {
         FeedbackDto feedbackDto = new FeedbackDto();
         feedbackDto.setId(feedback.getId());
         feedbackDto.setCreatedWhen(feedback.getCreatedWhen());
+        feedbackDto.setUpdatedWhen(feedback.getUpdatedWhen());
         feedbackDto.setDescription(feedback.getDescription());
         feedbackDto.setRating(feedback.getRating());
         feedbackDto.setStatus(feedback.getStatus());
@@ -177,5 +204,16 @@ public class FeedbackService {
         feedback.setDeclineMessage(feedbackDto.getDeclineMessage());
         feedback.setDeclineMessage(feedbackDto.getDeclineMessage());
         return feedback;
+    }
+
+    private void sendNotification(FeedbackDto feedback) {
+        try {
+            GetProductResponse product = shoppingRestClient.getProduct(feedback.getProductId());
+            GetCustomerResponse customer = shoppingRestClient.getCustomer(feedback.getProductId());
+            notificationRestClient.sendNotification(feedback, customer, product);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
+
     }
 }

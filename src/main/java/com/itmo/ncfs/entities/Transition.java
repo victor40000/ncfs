@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -22,7 +23,7 @@ public class Transition {
     @Enumerated(EnumType.STRING)
     private FeedbackStatus destination;
 
-    private Timestamp date;
+    private LocalDateTime date;
 
     private Integer moderatorId;
 

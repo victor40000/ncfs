@@ -1,14 +1,10 @@
 package com.itmo.ncfs.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.itmo.ncfs.enums.FeedbackStatus;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,6 +19,7 @@ public class Feedback {
 
     private Integer rating;
 
+    @Column(length = 512)
     private String description;
 
     private String declineMessage;
