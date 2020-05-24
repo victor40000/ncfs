@@ -21,7 +21,4 @@ public class Product {
 
     @ManyToMany(mappedBy = "products")
     private List<User> purchasedBy;
-
-    @OneToMany(mappedBy = "product")
-    private List<Feedback> feedback;
 }

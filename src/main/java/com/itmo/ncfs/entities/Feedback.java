@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -19,22 +19,24 @@ public class Feedback {
 
     private Integer rating;
 
+    @Column(length = 512)
     private String description;
 
-    private Date createdWhen;
+    private String declineMessage;
+
+    private LocalDateTime createdWhen;
+
+    private LocalDateTime updatedWhen;
 
     @Enumerated(EnumType.STRING)
     private FeedbackStatus status;
 
-    @ManyToOne
-    private User createdBy;
+    private Integer createdBy;
 
-    @ManyToOne
-    private User moderatedBy;
+    private Integer moderatedBy;
 
     @OneToMany(mappedBy = "feedback")
     private List<Transition> transitions;
 
-    @ManyToOne
-    private Product product;
+    private Integer productId;
 }

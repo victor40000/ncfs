@@ -25,12 +25,6 @@ public class User {
 
     private boolean active;
 
-    @OneToMany(mappedBy = "createdBy")
-    private List<Feedback> createdFeedback;
-
-    @OneToMany(mappedBy = "moderatedBy")
-    private List<Feedback> moderatedFeedback;
-
-    @ManyToMany(mappedBy = "purchasedBy")
+    @ManyToMany
     private List<Product> products;
 }
