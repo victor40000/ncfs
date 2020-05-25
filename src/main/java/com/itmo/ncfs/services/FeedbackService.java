@@ -160,6 +160,7 @@ public class FeedbackService {
     public void deleteFeedback(Integer id) {
         Feedback feedback = feedbackRepo.findById(id)
                 .orElseThrow(() -> new ValidationException(String.format(FEEDBACK_NOT_FOUND, id)));
+        validator.validateChangeFeedbackCase(feedback);
         feedbackRepo.deleteById(id);
     }
 
