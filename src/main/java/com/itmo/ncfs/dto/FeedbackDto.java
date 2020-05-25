@@ -7,6 +7,7 @@ import com.itmo.ncfs.dto.cases.UpdateStatusCase;
 import com.itmo.ncfs.enums.FeedbackStatus;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Max;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FeedbackDto {
 

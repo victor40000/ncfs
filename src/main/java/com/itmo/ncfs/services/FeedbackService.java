@@ -4,7 +4,6 @@ import com.itmo.ncfs.dto.FeedbackDto;
 import com.itmo.ncfs.entities.Feedback;
 import com.itmo.ncfs.entities.Transition;
 import com.itmo.ncfs.enums.FeedbackStatus;
-import com.itmo.ncfs.exceptions.ShoppingPortalException;
 import com.itmo.ncfs.exceptions.ValidationException;
 import com.itmo.ncfs.integrations.notification.NotificationRestClient;
 import com.itmo.ncfs.integrations.shopping.ShoppingRestClient;
@@ -66,25 +65,35 @@ public class FeedbackService {
         if (feedback.getDescription() == null || feedback.getDescription().isEmpty()) {
             feedback.setStatus(FeedbackStatus.APPROVED);
         }
-        return getFeedbackDto(feedbackRepo.save(feedback));
+
+        Feedback result = feedbackRepo.save(feedback);
+        log.info("Added feedback:\n" + getFeedbackDto(result).toString());
+        return getFeedbackDto(result);
     }
 
     public FeedbackDto changeFeedback(FeedbackDto feedbackDto) {
         Feedback feedback = feedbackRepo.findById(feedbackDto.getId())
                 .orElseThrow(() -> new ValidationException(String.format(FEEDBACK_NOT_FOUND, feedbackDto.getId())));
         validator.validateChangeFeedbackCase(feedback);
+        log.info("Trying to change feedback:\n" + getFeedbackDto(feedback).toString());
+
         feedback.setRating(feedbackDto.getRating());
         feedback.setDescription(feedbackDto.getDescription());
         feedback.setUpdatedWhen(LocalDateTime.now());
         if (feedback.getDescription() == null || feedback.getDescription().isEmpty()) {
             feedback.setStatus(FeedbackStatus.APPROVED);
         }
-        return getFeedbackDto(feedbackRepo.save(feedback));
+
+        Feedback result = feedbackRepo.save(feedback);
+        log.info("Changed feedback:\n" + getFeedbackDto(result).toString());
+        return getFeedbackDto(result);
     }
 
     public FeedbackDto changeFeedbackStatus(FeedbackDto feedbackDto) {
         Feedback feedback = feedbackRepo.findById(feedbackDto.getId())
                 .orElseThrow(() -> new ValidationException(String.format(FEEDBACK_NOT_FOUND, feedbackDto.getId())));
+        log.info("Trying to change feedback:\n" + getFeedbackDto(feedback).toString());
+
         Transition transition = new Transition();
         validator.validateChangeStatusCase(feedbackDto, feedback);
         if (FeedbackStatus.SUBMITTED.equals(feedbackDto.getStatus())) {
@@ -103,6 +112,7 @@ public class FeedbackService {
         transitionRepo.save(transition);
         FeedbackDto result = getFeedbackDto(feedbackRepo.save(feedback));
         sendNotification(result);
+        log.info("Changed feedback:\n" + result.toString());
         return result;
     }
 
@@ -162,6 +172,7 @@ public class FeedbackService {
                 .orElseThrow(() -> new ValidationException(String.format(FEEDBACK_NOT_FOUND, id)));
         validator.validateChangeFeedbackCase(feedback);
         feedbackRepo.deleteById(id);
+        log.info("Deleted feedback with id: " + id);
     }
 
     public Double getRating(Integer productId) {
